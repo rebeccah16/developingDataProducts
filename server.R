@@ -1,18 +1,27 @@
 library(shiny)
-lowerbound <- function(age) round((age / 2)+7)
-upperbound <- function(age) round((age-7)*2)
 
-shinyServer(
-  function(input, output) {
-    x <- 5:100
-      y <-(x/2)+7
-    y2 <-(x-7)*2
-    output$distPlot <- renderPlot({
-      plot(x,y,main = 'Change in lower bound age over time',type = 'l',xlab = 'My Age', ylab='Minimum acceptible dating age') })
- output$distPlot2 <- renderPlot({
-      plot(x,y2,main='Change in upper bound age over time',type = 'l',xlab= 'My Age',ylab='Maximum acceptible dating age') })
-    output$inputValue <- renderPrint({input$myage})
-    output$lowerprediction <- renderPrint({lowerbound(input$myage)})
-    output$upperprediction <- renderPrint({upperbound(input$myage)})
-  }
-)
+# Define UI for dataset viewer application
+shinyUI(
+  pageWithSidebar(
+    # Application title
+    headerPanel("Optimal Dating Age Calculator"),
+    sidebarPanel(
+      helpText("This calculator allows you to enter your age and then calculates the minimum and maximum socially-acceptable age for a dating or marriage partner."),
+      h3("Enter your age below to calculate your ideal age range:"),
+      
+      numericInput('myage', 'Age(years)', 25, min = 0, max = 150, step = 1),
+      submitButton('Calculate')
+    ),
+    mainPanel(
+      h3('Your results:'),
+      h4('Your current age is:'),
+      verbatimTextOutput("inputValue"),
+      h4('The minimum socially-acceptible dating age for you is:'),
+      verbatimTextOutput("lowerprediction"),
+      h4('The maximum socially-acceptible dating age for you is:'),
+      verbatimTextOutput("upperprediction"),
+      
+      plotOutput("distPlot"),
+      
+      plotOutput("distPlot2"))
+    ))
